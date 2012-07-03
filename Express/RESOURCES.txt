@@ -1,0 +1,50 @@
+# Arduino
+
+http://semu.github.com/noduino/
+
+https://github.com/ecto/duino
+
+http://brandontilley.com/2012/03/02/controlling-an-arduino-from-nodejs.html
+
+http://arduino.cc/blog/2012/06/05/publishing-data-on-the-web-with-node-js/
+http://dangerousprototypes.com/2012/06/03/arduino-and-the-web-using-nodejs-and-serialport2/
+
+http://www.youtube.com/watch?v=6yl_jmYQLhM
+
+# Node.JS
+
+http://javascriptplayground.com/blog/2012/04/node-js-a-todo-app-with-express
+
+http://shapeshed.com/creating-a-basic-site-with-node-and-express/
+
+http://elegantcode.com/2011/12/23/taking-toddler-steps-with-node-js-express/
+
+# nowjs
+
+This is awesome. Invisible RPC. 
+
+https://github.com/Flotype/now
+
+I should throw away all the other stuffs and flip over to this. Plays nice with Express.
+
+# S3
+
+http://thechangelog.com/post/2128784522/knox-s3-lib
+
+http://stackoverflow.com/questions/9437581/node-js-amazon-s3-how-to-iterate-through-all-files-in-a-bucket
+
+https://github.com/SaltwaterC/aws2js#readme
+
+# Openkeyval
+
+We can host this ourselves, even.
+
+http://openkeyval.org/
+
+https://github.com/shinyplasticbag/openkeyval
+
+http://jaybyjayfresh.com/2009/07/06/adapting-wireit-to-work-with-independent-data-stores/
+
+# TIDDLYWIKI!
+
+http://tiddlyspace.com/

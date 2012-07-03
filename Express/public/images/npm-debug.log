@@ -1,0 +1,23 @@
+info it worked if it ends with ok
+verbose cli [ 'node', '/usr/local/bin/npm', 'start' ]
+info using npm@1.1.24
+info using node@v0.6.19
+verbose config file /Users/jadudm/.npmrc
+verbose config file /usr/local/etc/npmrc
+verbose config file /usr/local/lib/node_modules/npm/npmrc
+ERR! Error: ENOENT, open '/Users/jadudm/Dropbox/IFTTT/Express/public/images/package.json'
+ERR! You may report this log at:
+ERR!     <http://github.com/isaacs/npm/issues>
+ERR! or email it to:
+ERR!     <npm-@googlegroups.com>
+ERR! 
+ERR! System Darwin 10.8.0
+ERR! command "node" "/usr/local/bin/npm" "start"
+ERR! cwd /Users/jadudm/Dropbox/IFTTT/Express/public/images
+ERR! node -v v0.6.19
+ERR! npm -v 1.1.24
+ERR! path /Users/jadudm/Dropbox/IFTTT/Express/public/images/package.json
+ERR! code ENOENT
+ERR! message ENOENT, open '/Users/jadudm/Dropbox/IFTTT/Express/public/images/package.json'
+ERR! errno {}
+verbose exit [ 1, true ]
