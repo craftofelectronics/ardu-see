@@ -1,4 +1,13 @@
-#lang racket/base
+#lang racket
+
+;; Server modules
+;; Functionality for the server is broken down into modules
+;; handling one or more endpoints in the dispatcher.
+(require 
+ (file "infra.rkt")
+ (file "arduino.rkt")
+ (file "store.rkt")
+ (file "system.rkt"))
 
 ;; Each library function is prefixed by the module it came from.
 (require racket/runtime-path)
@@ -7,11 +16,15 @@
 (require web-server/dispatch)
 (define-values (dispatch blog-url)
   (dispatch-rules
-   [("json") json]
-   [("list") list-arduinos]
-   [("set" (string-arg) (string-arg)) set-data]
-   [("get" (string-arg)) get-data]
    [("run" (string-arg)) show-json]
+   ;; Handled by arduino.rkt
+   [("list") list-arduinos]
+   [("reset") (check-pathway arduino? 
+                             reset-arduino)]
+   ;; Handled by store.rkt
+   [("set" (string-arg) (string-arg)) set-data/api]
+   [("get" (string-arg)) get-data/api]
+   
    ))
 
 ;; dispatch-rules patterns cover the entire URL, not just the prefix,
@@ -20,10 +33,6 @@
 ;; not necessary.
 
 (require web-server/http)
-(define (json req)
-  (response/xexpr
-   `(html (body (p "Dynamically")))))
-
 (define (show-json req json)
   (define log-op (open-output-file 
                   (build-path here "my.log") #:exists 'append))
@@ -33,34 +42,6 @@
   (close-output-port log-op)
   (response/xexpr 
    `(p ,(format "~a" (current-seconds)))))
-
-(define data (make-hash))
-
-(define (set-data req key value)
-  (hash-set! data key value)
-  (response/xexpr
-   `(html
-     (body
-      (p ,(format "Set ~a to ~a" key value))))))
-
-(define (get-data req key)
-  (response/xexpr
-   `(html
-     (body 
-      (p ,(hash-ref data key (λ () "Oops")))))))
-
-(define (list-arduinos req)
-  (response/xexpr
-   `(html
-     (body
-      (ul 
-       ,@(map (λ (s)
-               `(li ,(path->string s)))
-             (filter (λ (str)
-                       (and (regexp-match "tty" str)
-                            (regexp-match "usb" str)))
-                     (directory-list "/dev"))))))))
-  
 
 ;; (current-directory) is the directory that you start the server
 ;; from, not the directory where the server's source file is
