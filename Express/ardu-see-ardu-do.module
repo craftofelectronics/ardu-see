@@ -1,6 +1,6 @@
 #INCLUDE "plumbing.module"
 
-VAL INT READ.DELAY IS 500:
+VAL INT READ.DELAY IS 100:
 
 PROC ReadSensor (VAL INT pin, CHAN INT out!)
   INITIAL INT avr.pin IS board.analog.to.chip(pin):

@@ -198,9 +198,9 @@ WireIt.WiringEditor.adapters.Parse = {
 		payload.storage_key = storage_key;
 
 		$.ajax({
-      		url: "http://localhost:3000/run",
+      		url: "http://localhost:8000/run/",
     		type: "POST",
-      		data: payload,
+      		data: JSON.stringify(payload),
       		dataType: "jsonp",
       		success: function(data){
 				alert("RESPONSE: " + data);
