@@ -54,28 +54,30 @@
      
 (define (find-wire-direction module-index wires)
   (cond
-    [(empty? wires) (error "No more wires...")]
+    [(empty? wires) '()]
     
     [(ns-equal? (number->string module-index)
              (get (get (first wires) src) moduleId)) 
      (define term (get (get (first wires) src) terminal))
      (define m
        (regexp-match "[0-9]+(.*)" term))
-     (second m)]
+     (cons (second m)
+           (find-wire-direction module-index (rest wires)))]
     
     [(ns-equal? (number->string module-index)
              (get (get (first wires) tgt) moduleId)) 
      (define term (get (get (first wires) tgt) terminal))
      (define m
        (regexp-match "[0-9]+(.*)" term))
-     (second m)
+     (cons (second m)
+           (find-wire-direction module-index (rest wires)))
      ]
     [else
      (find-wire-direction module-index (rest wires))]))
 
 (define (make-wire-name moduleId wires)
   (cond
-    [(empty? wires) (error "No more wires...")]
+    [(empty? wires) '()]
     [(or (ns-equal? (number->string moduleId)
                  (get (get (first wires) src) moduleId))
          (ns-equal? (number->string moduleId)
@@ -86,7 +88,8 @@
                    (quicksort (list (get (get (first wires) src) moduleId)
                                     (get (get (first wires) tgt) moduleId))
                               uber<?))))
-     (format "wire~a" num) ]
+     (cons (format "wire~a" num)
+           (make-wire-name moduleId (rest wires)))]
     [else
      (make-wire-name moduleId (rest wires))]))
      
@@ -114,16 +117,18 @@
       (define me
         (list-ref (get-modules working) moduleId))
  
-      (define wire-direction
+      (define wire-directions
         (find-wire-direction moduleId (get-wires working)))
       
-      (define wire-name
+      (define wire-names
         (make-wire-name moduleId (get-wires working)))
       
-      (define decorated-wire-name
-        (if (equal? wire-direction "out")
-            (format "~a!" wire-name)
-            (format "~a?" wire-name)))
+      (define decorated-wire-names
+        (map (λ (wire-direction wire-name)
+               (if (equal? wire-direction "out")
+                   (format "~a!" wire-name)
+                   (format "~a?" wire-name)))
+             wire-directions wire-names))
       
       (define parameters
         (let* ([my-values (get me value)]
@@ -140,7 +145,7 @@
               (apply 
                string-append
                (list-intersperse 
-                (snoc parameters decorated-wire-name)
+                (append parameters decorated-wire-names)
                 ", ")))
       )))
        

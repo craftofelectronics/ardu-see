@@ -51,6 +51,22 @@ var ifttt = {
 	   	}
 	   },
   {
+    "name": "Turn On",
+    "container": {
+      "xtype": "WireIt.FormContainer",
+      "title": "turn_on",    
+      "icon": "res/icons/application_edit.png",
+      "collapsible": true,
+      "fields": [ 
+        {"type": "select", "inputParams": {"label": "Pin", "name": "1int", "selectValues": ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"] } },
+      ],
+      "terminals": [
+        {"name": "0in", "direction": [0,-1], "offsetPosition": {"left": 100, "top": -15 }},
+        ],
+      "legend": "If the input is in range, turn on a pin. Turn off otherwise."
+	   	}
+	   },
+  {
     "name": "Fade",
     "container": {
       "xtype": "WireIt.FormContainer",
@@ -82,6 +98,60 @@ var ifttt = {
       "legend": "Set a servo's position.."
 	   	}
 	   },
+  {
+    "name": "Toggle",
+    "container": {
+      "xtype": "WireIt.FormContainer",
+      "title": "toggle",    
+      "icon": "res/icons/application_edit.png",
+      "collapsible": true,
+      "fields": [ 
+        {"type": "select", "inputParams": {"label": "Pin", "name": "1int", "selectValues": ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"] } },
+      ],
+      "terminals": [
+        {"name": "0out", "direction": [0,1], "offsetPosition": {"left": 100, "bottom": -15}}
+        ],
+      "legend": "Toggles state based on a button press on the input pin."
+	   	}
+	   }, 
 	   
+	     {
+    "name": "Middle Pass",
+    "container": {
+      "xtype": "WireIt.FormContainer",
+      "title": "iao",    
+      "icon": "res/icons/application_edit.png",
+      "collapsible": true,
+      "fields": [ 
+        {"inputParams": {"label": "Min Value", "name": "2int", "value":"25", "required": true } }, 
+        {"inputParams": {"label": "Max Value", "name": "3int", "value":"75", "required": true} } 
+      ],
+      "terminals": [
+        {"name": "0in", "direction": [0,-1], "offsetPosition": {"left": 100, "top": -15 }},
+        {"name": "1out", "direction": [0,1], "offsetPosition": {"left": 100, "bottom": -15}}
+        ],
+      "legend": "Only pass values through within this range."
+	   	}
+	   },
+	   
+	   
+	     {
+    "name": "Gate",
+    "container": {
+      "xtype": "WireIt.FormContainer",
+      "title": "and",    
+      "icon": "res/icons/application_edit.png",
+      "collapsible": false,
+      "fields": [ 
+
+      ],
+      "terminals": [
+        {"name": "0in", "direction": [0,-1], "offsetPosition": {"left": 100, "top": -15 }},
+        {"name": "1in", "direction": [0,-1], "offsetPosition": {"left": 60, "top": -15 }},
+        {"name": "2out", "direction": [0,1], "offsetPosition": {"left": 100, "bottom": -15}}
+        ],
+      "legend": "Pass the left-hand wire through when the right-hand wire is on."
+	   	}
+	   },
   ]
 };

@@ -2,6 +2,32 @@
 
 VAL INT READ.DELAY IS 100:
 
+PROC MiddlePass (VAL INT low, high, CHAN INT in?, out!)
+  INT v:
+  WHILE TRUE
+    SEQ
+      in ? v
+      IF 
+        (v >= low) AND (v <= high)
+          out ! v
+        TRUE
+          SKIP
+:
+
+PROC Gate (CHAN INT a?, b?, o!)
+  INT va, vb:
+  WHILE TRUE
+    SEQ
+      PAR
+        a ? va
+        b ? vb
+      IF 
+        (va >= 1) AND (vb >= 1)
+          o ! va
+        TRUE
+          o ! 0
+:
+
 PROC Toggle (VAL INT pin, CHAN INT out!)
   INITIAL INT vout IS 0:
   LEVEL pin.state:
@@ -10,7 +36,6 @@ PROC Toggle (VAL INT pin, CHAN INT out!)
     digital.mode (pin, INPUT)
     WHILE TRUE
       SEQ
-        delay (300)
         digital.read (pin, pin.state)
         IF
           (BOOL pin.state) AND (BOOL prev)
@@ -19,8 +44,8 @@ PROC Toggle (VAL INT pin, CHAN INT out!)
             vout := (vout + 1) REM 2
           TRUE
             SKIP
-        serial.write.int (TX0, vout)
-        serial.write.newline (TX0)
+        -- serial.write.int (TX0, vout)
+        -- serial.write.newline (TX0)
         out ! (vout * 100)
 :
 
@@ -42,6 +67,19 @@ PROC TurnOnInRange (VAL INT pin, min, max, CHAN INT in?)
       in ? value
       IF
         (value >= min) AND (value <= max)
+          digital.write(pin, HIGH)
+        TRUE
+          digital.write(pin, LOW)
+:
+
+PROC TurnOn (VAL INT pin, CHAN INT in?)
+  WHILE TRUE
+    INT value:
+    SEQ
+      digital.mode (pin, OUTPUT)
+      in ? value
+      IF
+        (value >= 1) 
           digital.write(pin, HIGH)
         TRUE
           digital.write(pin, LOW)
