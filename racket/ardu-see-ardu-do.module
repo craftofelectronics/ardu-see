@@ -2,6 +2,28 @@
 
 VAL INT READ.DELAY IS 100:
 
+PROC Toggle (VAL INT pin, CHAN INT out!)
+  INITIAL INT vout IS 0:
+  LEVEL pin.state:
+  INITIAL LEVEL prev IS LOW:
+  SEQ
+    digital.mode (pin, INPUT)
+    WHILE TRUE
+      SEQ
+        delay (300)
+        digital.read (pin, pin.state)
+        IF
+          (BOOL pin.state) AND (BOOL prev)
+            SKIP
+          (BOOL pin.state) OR (BOOL prev)
+            vout := (vout + 1) REM 2
+          TRUE
+            SKIP
+        serial.write.int (TX0, vout)
+        serial.write.newline (TX0)
+        out ! (vout * 100)
+:
+
 PROC ReadSensor (VAL INT pin, CHAN INT out!)
   INITIAL INT avr.pin IS board.analog.to.chip(pin):
   WHILE TRUE
@@ -29,11 +51,20 @@ PROC Fade (VAL INT pin, CHAN INT in?)
   CHAN BYTE lvl:
   PAR
     pwm (pin, lvl?)
+    INITIAL INT prev IS 0:
+    INT value:
     WHILE TRUE
-      INT value:
       SEQ
         digital.mode (pin, OUTPUT)
         in ? value
+        IF 
+          value <> prev
+            SEQ
+              prev := value
+              serial.write.int (TX0, ((value * 25) / 10))
+              serial.write.newline (TX0)
+          TRUE
+            SKIP
         lvl ! (BYTE ((value * 25) / 10))
 :
 
