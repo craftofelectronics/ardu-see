@@ -50,5 +50,38 @@ var ifttt = {
       "legend": "If the input is in range, turn on a pin. Turn off otherwise."
 	   	}
 	   },
+  {
+    "name": "Fade",
+    "container": {
+      "xtype": "WireIt.FormContainer",
+      "title": "fade",    
+      "icon": "res/icons/application_edit.png",
+      "collapsible": true,
+      "fields": [ 
+        {"type": "select", "inputParams": {"label": "Pin", "name": "1int", "selectValues": ["3", "5", "6", "9", "10", "11"] } },
+      ],
+      "terminals": [
+        {"name": "0in", "direction": [0,-1], "offsetPosition": {"left": 100, "top": -15 }},
+        ],
+      "legend": "Fade the pin based on the input value."
+	   	}
+	   },
+  {
+    "name": "Set Servo",
+    "container": {
+      "xtype": "WireIt.FormContainer",
+      "title": "fade",    
+      "icon": "res/icons/application_edit.png",
+      "collapsible": true,
+      "fields": [ 
+        {"type": "select", "inputParams": {"label": "Pin", "name": "1int", "selectValues": ["3", "5", "6", "9", "10", "11"] } },
+      ],
+      "terminals": [
+        {"name": "0in", "direction": [0,-1], "offsetPosition": {"left": 100, "top": -15 }},
+        ],
+      "legend": "Set a servo's position.."
+	   	}
+	   },
+	   
   ]
 };

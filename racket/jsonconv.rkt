@@ -4,7 +4,8 @@
 (require mzlib/list 
          (prefix-in srfi1: srfi/1))
 (require racket/cmdline)
-(require (file "base.rkt"))
+(require (file "base.rkt")
+         (file "store.rkt"))
 (provide json->occ)
 
 (define VERSION 1.00)
@@ -182,14 +183,17 @@
   
   (s! (format "#INCLUDE \"ardu-see-ardu-do.module\"~n"))
   (s! (format "PROC main~a ()\n" (current-seconds)))
-  (s! (format "  CHAN INT ~a:~n" 
+  (s! (format "  SEQ~n"))
+  ;(s! (format "    serial.start(TX0, ~a)~n" (get-data 'baud)))
+  
+  (s! (format "    CHAN INT ~a:~n" 
               (apply string-append
                      (list-intersperse 
                       (build-wire-names (get-working sjson))
                       ", "))))
-  (s! "  PAR\n")
+  (s! "    PAR\n")
   (for-each (λ (str)
-              (s! (format "    ~a~n" str)))
+              (s! (format "      ~a~n" str)))
             proc-list)
   (s! ":\n")
   result

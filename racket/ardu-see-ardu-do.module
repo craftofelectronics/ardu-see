@@ -16,6 +16,7 @@ PROC TurnOnInRange (VAL INT pin, min, max, CHAN INT in?)
   WHILE TRUE
     INT value:
     SEQ
+      digital.mode (pin, OUTPUT)
       in ? value
       IF
         (value >= min) AND (value <= max)
@@ -23,3 +24,27 @@ PROC TurnOnInRange (VAL INT pin, min, max, CHAN INT in?)
         TRUE
           digital.write(pin, LOW)
 :
+
+PROC Fade (VAL INT pin, CHAN INT in?)
+  CHAN BYTE lvl:
+  PAR
+    pwm (pin, lvl?)
+    WHILE TRUE
+      INT value:
+      SEQ
+        digital.mode (pin, OUTPUT)
+        in ? value
+        lvl ! (BYTE ((value * 25) / 10))
+:
+
+PROC SetServo (VAL INT pin, CHAN INT in?)
+  CHAN BYTE p:
+  PAR
+    simple.servo (pin , p?)
+    INT v:
+    WHILE TRUE
+      SEQ
+        in ? v
+        p ! (BYTE ((v * 36) / 21))
+:
+

@@ -9,7 +9,8 @@
          hex-file
          app-log
          bin-path
-         SEP)
+         SEP
+         conf-file)
 
 ;; Each library function is prefixed by the module it came from.
 (require racket/runtime-path)
@@ -39,6 +40,9 @@
 
 (define bin-path
   (build-path HERE "tvm" (format "~a" (system-type)) "bin"))
+
+(define conf-file
+  (build-path HERE "tvm" "common" "conf" "avrdude.conf"))
 
 (define SEP
   (case (system-type)

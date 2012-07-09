@@ -6,25 +6,16 @@
          )
 
 (provide list-arduinos
-         reset-arduino
          arduino?)
 
 (define (arduino? req)
-  (get-data KEY:ARDUINO))
- 
-;; reset-arduino
-(define (reset-arduino req)
-  (let ([dev (get-data KEY:ARDUINO)])
-    
-    (response/xexpr
-     `(html (body (p ,(format "Reset: ~a" dev)))))
-    ))
+  (get-data 'arduino-port))
   
 
 ;; list-arduinos
 (define (make-set-url dev)
   (define the-device (path->string dev))
-  `(li (a ((href ,(format "~a/set/~a/~a" BASE-URL KEY:ARDUINO the-device)))
+  `(li (a ((href ,(format "~a/set/~a/~a" BASE-URL 'arduino-port the-device)))
           ,the-device)))
 
 (define (list-arduinos req)

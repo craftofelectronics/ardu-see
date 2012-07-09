@@ -32,11 +32,11 @@
    [("run" (string-arg)) log-and-run]
    ;; Handled by arduino.rkt
    [("list") list-arduinos]
-   [("reset") (check-pathway arduino? 
-                             reset-arduino)]
    ;; Handled by store.rkt
    [("set" (string-arg) (string-arg)) set-data/api]
    [("get" (string-arg)) get-data/api]
+   
+   [("platform" (string-arg)) set-platform-parameters]
    
    ))
 

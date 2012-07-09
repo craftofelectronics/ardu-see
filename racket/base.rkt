@@ -1,5 +1,6 @@
 #lang racket
 
+(require (file "store.rkt"))
 (provide BASE-URL
          PORT
          KEY:ARDUINO

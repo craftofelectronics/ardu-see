@@ -3,12 +3,17 @@
 
 (provide set-data/api
          get-data/api
-         get-data)
+         get-data
+         set-data!
+         get-keys)
 
 (define data (make-hash))
 
+(define (->sym v)
+  (string->symbol (format "~a" v)))
+
 (define (set-data/api req key value)
-  (hash-set! data key value)
+  (hash-set! data (->sym key) value)
   (response/xexpr
    `(html
      (body
@@ -18,7 +23,13 @@
   (response/xexpr
    `(html
      (body 
-      (p ,(hash-ref data key (λ () "Oops")))))))
+      (p ,(hash-ref data (->sym key) (λ () "Oops")))))))
+
+(define (set-data! key value)
+  (hash-set! data key value))
 
 (define (get-data key)
   (hash-ref data key (λ () false)))
+
+(define (get-keys)
+  (hash-keys data))
