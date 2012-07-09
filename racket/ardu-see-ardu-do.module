@@ -1,0 +1,25 @@
+#INCLUDE "plumbing.module"
+
+VAL INT READ.DELAY IS 100:
+
+PROC ReadSensor (VAL INT pin, CHAN INT out!)
+  INITIAL INT avr.pin IS board.analog.to.chip(pin):
+  WHILE TRUE
+    INT reading:
+    SEQ
+      delay(READ.DELAY)
+      adc.base(avr.pin, VCC, reading)
+      out ! (reading / 11)
+:
+
+PROC TurnOnInRange (VAL INT pin, min, max, CHAN INT in?)
+  WHILE TRUE
+    INT value:
+    SEQ
+      in ? value
+      IF
+        (value >= min) AND (value <= max)
+          digital.write(pin, HIGH)
+        TRUE
+          digital.write(pin, LOW)
+:

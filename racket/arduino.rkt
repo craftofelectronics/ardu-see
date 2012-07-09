@@ -2,6 +2,7 @@
 (require (file "base.rkt"))
 (require web-server/http
          (file "store.rkt")
+         (file "paths.rkt")
          )
 
 (provide list-arduinos

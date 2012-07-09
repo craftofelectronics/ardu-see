@@ -4,19 +4,32 @@
 ;; Functionality for the server is broken down into modules
 ;; handling one or more endpoints in the dispatcher.
 (require 
- (file "infra.rkt")
  (file "arduino.rkt")
  (file "store.rkt")
- (file "system.rkt"))
+ (file "system.rkt")
+ (file "paths.rkt"))
 
-;; Each library function is prefixed by the module it came from.
-(require racket/runtime-path)
-(define-runtime-path here ".")
+
+;; Takes a list of functions, and makes sure that
+;; we can do everything along the way, returning the result of
+;; the last function. There is almost certainly a more elegant,
+;; Schemely way to do this.
+(define check-pathway
+  (λ funs
+    (λ (req)
+      (cond
+        [(empty? (rest funs))
+         ((first funs) req)]
+        [else
+         (if ((first funs) req)
+             ((apply check-pathway (rest funs)) req)
+             (response/xexpr
+              `(p "No.")))]))))
 
 (require web-server/dispatch)
 (define-values (dispatch blog-url)
   (dispatch-rules
-   [("run" (string-arg)) show-json]
+   [("run" (string-arg)) log-and-run]
    ;; Handled by arduino.rkt
    [("list") list-arduinos]
    [("reset") (check-pathway arduino? 
@@ -33,13 +46,15 @@
 ;; not necessary.
 
 (require web-server/http)
-(define (show-json req json)
-  (define log-op (open-output-file 
-                  (build-path here "my.log") #:exists 'append))
+
+(define (log-and-run req http-param)
+  (define log-op (open-output-file app-log #:exists 'append))
   (fprintf log-op "~a~n" (current-seconds))
-  (fprintf log-op "~a~n" json)
   (fprintf log-op "~n~a~n" (request-post-data/raw req))
   (close-output-port log-op)
+  
+  (run req (request-post-data/raw req))
+  
   (response/xexpr 
    `(p ,(format "~a" (current-seconds)))))
 
@@ -50,7 +65,7 @@
 (require web-server/servlet-env)
 (serve/servlet dispatch
                #:launch-browser? #f
-               #:extra-files-paths (list (build-path here "htdocs"))
+               #:extra-files-paths (list (build-path HERE "htdocs"))
                #:servlet-path "/"
                #:servlet-regexp #rx""
                #:log-file "its.log")

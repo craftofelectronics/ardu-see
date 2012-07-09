@@ -198,9 +198,14 @@ WireIt.WiringEditor.adapters.Parse = {
 		payload.storage_key = storage_key;
 
 		$.ajax({
+		  // 3000 for node, 8000 for scheme
+		  // FIXME: CHANGE NODE SERVER TO 8000
       		url: "http://localhost:8000/run/",
     		type: "POST",
+    		// For Scheme server
       		data: JSON.stringify(payload),
+      		// For Node server
+      		//data: payload,
       		dataType: "jsonp",
       		success: function(data){
 				alert("RESPONSE: " + data);
