@@ -6,9 +6,6 @@
 
 (provide run )
 
-(define (exec:sync cmd)
-  (system cmd))
-
 ;; RUNNING COMMANDS
 ;; We'll define commands as S-expressions. The language
 ;; looks like
@@ -126,19 +123,7 @@
   (fprintf op "~a~n" (json->occ (file->string json-file)))
   (close-output-port op))
 
-(define (compile-occam-file)
-  (define isearch (apply string-append 
-                           (list-intersperse 
-                            (map ->string (isearch-list))
-                            ":")))
-  (define cmd (compile-cmd occ-file))
-  
-  ;(printf "ISEARCH: ~a~n" isearch)
-  ;(putenv "ISEARCH" isearch)
-  
-  (printf "COMPILE: ~a~n" (format "export ISEARCH=~a ; ~a" 
-                                  isearch
-                                  cmd))
+(define (exe cmd)
   (let-values ([(from-stdout
                  to-stdin
                  process-id
@@ -148,17 +133,58 @@
       (cond
         [(or (equal? status 'done-ok)
              (equal? status 'done-error))
-         (printf "EXIT CODE: ~a~n" (status-fun 'exit-code))]
+         (close-input-port from-stdout)
+         (close-input-port from-stderr)
+         (close-output-port to-stdin)]
         [else (loop (status-fun 'status))])
-      ))
-      
-      
-  )
+      )))
+
+(define (compile-occam-file)
+  (define isearch (apply string-append 
+                           (list-intersperse 
+                            (map ->string (isearch-list))
+                            ":")))
+  (define cmd (compile-cmd occ-file))
+  (set! cmd (format "export ISEARCH=~a ; ~a" isearch cmd))
+  (set! cmd (format "cd ~a ; ~a"
+                    HERE
+                    cmd))
+  (exe cmd))
+
+(define (plinker-cmd)
+  (format "~a~a~a"
+          bin-path
+          SEP
+          (render
+           (parse 
+             `(plinker.pl -s 
+                          -o ,tbc-file
+                          ,(->string 
+                            (build-path 
+                             HERE  "tvm" "common" "lib" "forall.lib"))
+                          ,tce-file)))))
+                                       
+                          
+(define (plink)
+  (exe (plinker-cmd)))
+
+(define (bin2hex-cmd)
+  (format "~a~a~a"
+          bin-path
+          SEP
+          (render
+           (parse 
+             `(binary-to-ihex 0x4F00 ,tbc-file ,hex-file)))))
+
+(define (bin2hex)
+  (exe (bin2hex-cmd)))
    
 (define (run req json)
   (save-json-file (format "~a" json))
   (transform-json-file)
   (compile-occam-file)
+  (plink)
+  (bin2hex)
   )
 
   

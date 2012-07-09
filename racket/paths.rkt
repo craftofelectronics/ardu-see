@@ -4,6 +4,9 @@
          temp-file-base
          json-file
          occ-file
+         tce-file
+         tbc-file
+         hex-file
          app-log
          bin-path
          SEP)
@@ -21,6 +24,15 @@
 (define occ-file 
   (build-path HERE
               (format "~a.occ" temp-file-base)))
+(define tce-file 
+  (build-path HERE
+              (format "~a.tce" temp-file-base)))
+(define tbc-file 
+  (build-path HERE
+              (format "~a.tbc" temp-file-base)))
+(define hex-file 
+  (build-path HERE
+              (format "~a.hex" temp-file-base)))
 
 (define app-log (build-path HERE 
                             (format "~a.log" temp-file-base)))
