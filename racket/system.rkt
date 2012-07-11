@@ -138,8 +138,10 @@
 
 (define (transform-json-file)
   (define op (open-output-file occ-file #:exists 'replace))
-  (fprintf op "~a~n" (json->occ (file->string json-file)))
-  (close-output-port op))
+  (define xformed (json->occ (file->string json-file)))
+  (fprintf op "~a~n" xformed)
+  (close-output-port op)
+  (printf "~n===~n~a~n===~n" xformed))
 
 (define (exe cmd)
   (let-values ([(from-stdout
@@ -229,27 +231,27 @@
 (define (reset-arduino)
   (define ARDUINO-PORT (get-data 'arduino-port))
   (define cmd (format "~a~a~a" 
-                 bin-path
-                 SEP
-                 (reset-cmd ARDUINO-PORT)))
+                      bin-path
+                      SEP
+                      (reset-cmd ARDUINO-PORT)))
   (printf "RESET: ~a~n" cmd)
   (when ARDUINO-PORT
     (exe cmd)))
 
 (define (avrdude-cmd sp)
   (format "~a~a~a"
-                     bin-path
-                     SEP
-                     (render
-                      (parse 
-                        `(avrdude -C ,(->string conf-file)
-                                  -V -F 
-                                  (-p ,(get-data 'mcpu)) ;FIXME
-                                  (-b ,(get-data 'baud))
-                                  (-c arduino)
-                                  (-P ,(build-port sp))
-                                  -D -U 
-                                  ,(format "flash:w:~a" hex-file))))))
+          bin-path
+          SEP
+          (render
+           (parse 
+             `(avrdude -C ,(->string conf-file)
+                       -V -F 
+                       (-p ,(get-data 'mcpu)) ;FIXME
+                       (-b ,(get-data 'baud))
+                       (-c arduino)
+                       (-P ,(build-port sp))
+                       -D -U 
+                       ,(format "flash:w:~a" hex-file))))))
 
 (define (avrdude)
   (define ARDUINO-PORT (get-data 'arduino-port))
@@ -260,8 +262,8 @@
 
 (define (show-table)
   (for-each (λ (k)
-         (printf "~a : ~a~n" k (get-data k)))
-    (get-keys)))
+              (printf "~a : ~a~n" k (get-data k)))
+            (get-keys)))
 
 (define (run req json)
   (show-table)

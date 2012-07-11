@@ -1,6 +1,6 @@
 #INCLUDE "plumbing.module"
 
-VAL INT READ.DELAY IS 100:
+VAL INT READ.DELAY IS 10:
 
 PROC MiddlePass (VAL INT low, high, CHAN INT in?, out!)
   INT v:
@@ -13,6 +13,38 @@ PROC MiddlePass (VAL INT low, high, CHAN INT in?, out!)
         TRUE
           SKIP
 :
+
+PROC Copy (CHAN INT a?, o1!, o2!)
+  INT v:
+  WHILE TRUE
+    SEQ
+      a ? v
+      PAR
+        o1 ! v
+        o2 ! v
+:
+
+-- Do it fairly.
+PROC Merge (CHAN INT a?, b?, o!)
+  INT v:
+  INITIAL INT c IS 0:
+  WHILE TRUE
+    SEQ
+      ALT
+        (c = 0) & a ? v
+          SKIP
+        (c = 1) & b ? v
+          SKIP
+      c := (c + 1) REM 2
+      o ! v
+:
+
+PROC Hole (CHAN INT a?)
+  INT v:
+  WHILE TRUE
+    a ? v
+:
+
 
 PROC Gate (CHAN INT a?, b?, o!)
   INT va, vb:
@@ -73,37 +105,39 @@ PROC TurnOnInRange (VAL INT pin, min, max, CHAN INT in?)
 :
 
 PROC TurnOn (VAL INT pin, CHAN INT in?)
-  WHILE TRUE
-    INT value:
-    SEQ
-      digital.mode (pin, OUTPUT)
-      in ? value
-      IF
-        (value >= 1) 
-          digital.write(pin, HIGH)
-        TRUE
-          digital.write(pin, LOW)
+  SEQ
+    digital.mode (pin, OUTPUT)
+    WHILE TRUE
+      INT value:
+      SEQ
+        in ? value
+        IF
+          (value >= 1) 
+            digital.write(pin, HIGH)
+          TRUE
+            digital.write(pin, LOW)
 :
 
 PROC Fade (VAL INT pin, CHAN INT in?)
   CHAN BYTE lvl:
-  PAR
-    pwm (pin, lvl?)
-    INITIAL INT prev IS 0:
-    INT value:
-    WHILE TRUE
-      SEQ
-        digital.mode (pin, OUTPUT)
-        in ? value
-        IF 
-          value <> prev
-            SEQ
-              prev := value
-              serial.write.int (TX0, ((value * 25) / 10))
-              serial.write.newline (TX0)
-          TRUE
-            SKIP
-        lvl ! (BYTE ((value * 25) / 10))
+  SEQ
+    digital.mode (pin, OUTPUT)
+    PAR
+      pwm (pin, lvl?)
+      INITIAL INT prev IS 0:
+      INT value:
+      WHILE TRUE
+        SEQ
+          in ? value
+          IF 
+            value <> prev
+              SEQ
+                prev := value
+                -- serial.write.int (TX0, ((value * 25) / 10))
+                -- serial.write.newline (TX0)
+            TRUE
+              SKIP
+          lvl ! (BYTE ((value * 25) / 10))
 :
 
 PROC SetServo (VAL INT pin, CHAN INT in?)

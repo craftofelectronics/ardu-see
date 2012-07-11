@@ -64,9 +64,9 @@
 
 (require web-server/servlet-env)
 (serve/servlet dispatch
-               #:launch-browser? #f
+               #:launch-browser? #t
                #:extra-files-paths (list (build-path HERE "htdocs"))
                #:servlet-path "/"
                #:servlet-regexp #rx""
-               #:log-file "its.log")
+               #:log-file (format "its-~a.log" (current-seconds)))
 
